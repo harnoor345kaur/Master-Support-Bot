@@ -14,15 +14,32 @@ export default function Home() {
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-
   const chatEndRef = useRef(null);
+  const [demoPassword, setDemoPassword] = useState("");
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  if (!isUnlocked) return;
+
   async function sendMessage() {
     if (!input.trim() || loading) return;
+
+    // ✅ If demo is locked, don’t allow sending messages
+    if (!isUnlocked) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          text: "🔒 This demo is password protected. Please enter the demo password to continue.",
+          confidence: null,
+          sources: [],
+        },
+      ]);
+      return;
+    }
 
     const userMessage = { role: "user", text: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
@@ -30,13 +47,49 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ask`, {
+      // ✅ remove trailing slash if any
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+
+      const res = await fetch(`${baseUrl}/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: userMessage.text }),
+        body: JSON.stringify({
+          question: userMessage.text,
+          password: demoPassword,
+        }),
       });
+
+      // ✅ Invalid password
+      if (res.status === 401) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: "🔒 Invalid demo password. Please enter the correct password to use this bot.",
+            confidence: null,
+            sources: [],
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Other backend errors
+      if (!res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: `⚠️ Server error (${res.status}). Please try again in a moment.`,
+            confidence: null,
+            sources: [],
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
 
       const data = await res.json();
 
@@ -83,6 +136,35 @@ export default function Home() {
             Ask me anything about the product & I’ll answer using the documentation.
           </p>
         </div>
+
+        {!isUnlocked && (
+          <div className="px-6 py-4 border-b border-slate-200 bg-white">
+            <p className="text-sm text-slate-700 font-medium mb-2">
+              🔒 Demo is password protected
+            </p>
+
+            <div className="flex items-center gap-3">
+              <input
+                type="password"
+                value={demoPassword}
+                onChange={(e) => setDemoPassword(e.target.value)}
+                placeholder="Enter demo password..."
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
+
+              <button
+                onClick={() => {
+                  if (!demoPassword.trim()) return;
+                  localStorage.setItem("DEMO_PASSWORD", demoPassword);
+                  setIsUnlocked(true);
+                }}
+                className="rounded-2xl bg-slate-900 text-white px-5 py-3 text-sm font-medium hover:bg-slate-800 transition"
+              >
+                Unlock
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Chat Body */}
         <div className="h-[550px] overflow-y-auto px-6 py-6 space-y-4 bg-slate-50">

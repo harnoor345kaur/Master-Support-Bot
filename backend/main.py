@@ -10,6 +10,8 @@ from rag.store import load_index
 from llm.gemini_llm import GeminiLLM
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi import HTTPException
+
 load_dotenv()
 
 app = FastAPI(title="Master Support Bot API")
@@ -41,6 +43,7 @@ Formatting rules (IMPORTANT):
 
 class AskRequest(BaseModel):
     question: str
+    password: str | None = None
 
 
 class AskResponse(BaseModel):
@@ -60,6 +63,13 @@ def embed_query(client, text: str) -> np.ndarray:
 
 @app.post("/ask", response_model=AskResponse)
 def ask_bot(req: AskRequest):
+    demo_password = os.getenv("DEMO_PASSWORD")
+
+    # If DEMO_PASSWORD is set, API becomes password-protected
+    if demo_password:
+        if not req.password or req.password != demo_password:
+            raise HTTPException(status_code=401, detail="Invalid demo password")
+
     api_key = os.getenv("API_KEY")
     if not api_key:
         raise ValueError("API_KEY not found")
