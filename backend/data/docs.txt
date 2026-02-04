@@ -1,0 +1,422 @@
+TaskFlow AI (Project Management + AI Assistant SaaS)
+1. Overview
+
+TaskFlow AI is a project management platform built for teams to manage tasks, track milestones, and automate workflows using AI. The platform supports task boards, team collaboration, integrations, and API access for automation.
+
+TaskFlow AI provides:
+
+Task Boards (Kanban)
+
+Calendar View
+
+Team Chat & Comments
+
+File Attachments
+
+Automations
+
+AI Assistant (summaries, task generation, status updates)
+
+REST API for custom integrations
+
+2. Account & Login
+2.1 Sign Up
+
+Users can create an account using:
+
+Email + password signup
+
+Google OAuth login
+
+After signup, a verification email is sent to confirm the email address.
+
+2.2 Email Verification
+
+If a user has not verified their email:
+
+They can still log in
+
+But some features like “Invite Members” and “Billing Upgrade” will be restricted until verification is completed.
+
+To resend verification email:
+
+Go to Settings → Account
+
+Click Resend Verification Email
+
+2.3 Forgot Password / Reset Password
+
+To reset password:
+
+Go to the login page
+
+Click Forgot Password
+
+Enter your registered email
+
+Check inbox for password reset link
+
+Set your new password
+
+Password rules:
+
+Minimum 8 characters
+
+At least 1 uppercase letter
+
+At least 1 number
+
+If the reset email is not received, users should:
+
+Check spam/junk folder
+
+Ensure they entered the correct email
+
+Try again after 2 minutes (email delivery can take time)
+
+3. Workspace & Team Management
+3.1 Workspaces
+
+A workspace is a shared area for a team to manage projects. Each user can:
+
+Create multiple workspaces
+
+Switch between workspaces from the top navigation bar
+
+3.2 Roles & Permissions
+
+TaskFlow AI supports role-based access control:
+
+Owner
+
+Full access
+
+Can manage billing
+
+Can delete workspace
+
+Can invite/remove members
+
+Can create API keys
+
+Admin
+
+Can manage projects and tasks
+
+Can invite members
+
+Cannot manage billing
+
+Member
+
+Can create/edit tasks assigned to them
+
+Can comment and upload files
+
+Cannot invite members
+
+Viewer
+
+Read-only access
+
+Can view tasks and boards
+
+Cannot comment or edit tasks
+
+3.3 Inviting Members
+
+To invite a team member:
+
+Go to Workspace Settings → Members
+
+Click Invite Member
+
+Enter email address
+
+Choose role (Admin/Member/Viewer)
+
+Click Send Invite
+
+The invited user will receive an email invitation link.
+
+4. Tasks & Boards
+4.1 Creating a Task
+
+To create a task:
+
+Open a project
+
+Click Add Task
+
+Enter task title and description
+
+Assign it to a member (optional)
+
+Select priority (Low/Medium/High)
+
+Set due date (optional)
+
+Click Create
+
+4.2 Task Status
+
+Statuses include:
+
+To Do
+
+In Progress
+
+Blocked
+
+Done
+
+Tasks can be dragged across columns in Kanban view.
+
+4.3 File Attachments
+
+Users can attach files up to 20MB per file.
+Supported file types:
+
+PDF
+
+PNG/JPG
+
+DOCX
+
+XLSX
+
+5. Notifications
+5.1 Email Notifications
+
+TaskFlow AI sends email notifications for:
+
+Task assignment
+
+Mentions in comments
+
+Task due date reminders
+
+Invite acceptance
+
+Users can manage notification settings in:
+Settings → Notifications
+
+5.2 Slack Notifications
+
+Slack integration allows teams to receive updates in channels when:
+
+tasks are created
+
+tasks are moved to “Done”
+
+urgent tasks are assigned
+
+Slack integration requires admin permissions.
+
+6. Billing & Subscription
+6.1 Plans
+
+TaskFlow AI offers:
+✅ Free Plan
+
+Up to 3 team members
+
+Up to 2 projects
+
+50 tasks/month
+
+Basic integrations
+
+✅ Pro Plan
+
+Unlimited projects
+
+Unlimited tasks
+
+Up to 25 team members
+
+AI Assistant enabled
+
+API access
+
+✅ Enterprise Plan
+
+Unlimited team members
+
+Advanced security controls
+
+Dedicated support
+
+Custom SLA
+
+SSO (Single Sign-On)
+
+6.2 Upgrading Plan
+
+To upgrade:
+
+Go to Settings → Billing
+
+Click Upgrade
+
+Select the plan
+
+Enter payment details
+
+Confirm purchase
+
+6.3 Cancel Subscription
+
+To cancel:
+
+Go to Settings → Billing
+
+Click Cancel Plan
+
+Confirm cancellation
+
+Cancellation notes:
+
+The plan remains active until the end of billing cycle
+
+No refunds for partially used months
+
+After cancellation, workspace will move to Free plan limits
+
+6.4 Invoices
+
+Invoices can be downloaded from:
+Settings → Billing → Invoices
+
+7. API Documentation
+7.1 API Access
+
+API access is available only on:
+✅ Pro and Enterprise plans
+
+To create an API key:
+
+Go to Settings → Developer
+
+Click Generate API Key
+
+Copy and store it securely
+
+Keys are shown only once
+
+7.2 Authentication
+
+All API requests must include an Authorization header:
+
+Authorization: Bearer YOUR_API_KEY
+
+
+If API key is missing or incorrect:
+
+the server will return 401 Unauthorized
+
+7.3 Base URL
+
+All endpoints use:
+
+https://api.taskflow.ai/v1/
+
+7.4 Rate Limits
+
+Rate limits depend on plan:
+
+Free: 30 requests/minute
+
+Pro: 120 requests/minute
+
+Enterprise: 600 requests/minute
+
+If user exceeds rate limit:
+
+API returns 429 Too Many Requests
+
+Client should retry after 30 seconds
+
+7.5 Common API Errors
+
+400 Bad Request
+
+Invalid input
+
+Missing required fields
+
+401 Unauthorized
+
+Missing or invalid API key
+
+403 Forbidden
+
+Role does not allow requested action
+
+404 Not Found
+
+Resource does not exist
+
+500 Internal Server Error
+
+Unexpected issue on server
+
+8. Security & Data Privacy
+8.1 Data Storage
+
+User data is stored securely in cloud databases
+
+Passwords are hashed and never stored in plain text
+
+8.2 GDPR Compliance
+
+TaskFlow AI supports GDPR requirements:
+
+Users can request data export
+
+Users can request account deletion
+
+8.3 Account Deletion
+
+To delete account:
+
+Go to Settings → Account
+
+Click Delete Account
+
+Confirm
+
+Account deletion is permanent and cannot be undone.
+
+9. Troubleshooting
+9.1 I can’t log in
+
+Try:
+
+verifying email and password
+
+resetting password
+
+checking if account is locked
+
+9.2 I didn’t get verification email
+
+Try:
+
+checking spam folder
+
+resending verification email from settings
+
+waiting 2 minutes
+
+9.3 API requests failing
+
+Check:
+
+API key is valid
+
+Authorization header format is correct
+
+plan supports API access (Pro/Enterprise)
+
+rate limits (429 response)
