@@ -14,15 +14,16 @@ export default function Home() {
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const chatEndRef = useRef(null);
+
   const [demoPassword, setDemoPassword] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
 
+  const chatEndRef = useRef(null);
+
+  // ✅ Auto scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-
-  if (!isUnlocked) return;
 
   async function sendMessage() {
     if (!input.trim() || loading) return;
@@ -47,7 +48,6 @@ export default function Home() {
     setLoading(true);
 
     try {
-      // ✅ remove trailing slash if any
       const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
       const res = await fetch(`${baseUrl}/ask`, {
@@ -63,6 +63,8 @@ export default function Home() {
 
       // ✅ Invalid password
       if (res.status === 401) {
+        setIsUnlocked(false);
+
         setMessages((prev) => [
           ...prev,
           {
@@ -126,17 +128,18 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <div className="w-full max-w-3xl bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden">
-        
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-200 bg-white">
           <h1 className="text-xl font-semibold text-slate-900">
             Support Assistant 💬
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Ask me anything about the product & I’ll answer using the documentation.
+            Ask me anything about the product & I’ll answer using the
+            documentation.
           </p>
         </div>
 
+        {/* ✅ Password Unlock UI */}
         {!isUnlocked && (
           <div className="px-6 py-4 border-b border-slate-200 bg-white">
             <p className="text-sm text-slate-700 font-medium mb-2">
@@ -149,13 +152,12 @@ export default function Home() {
                 value={demoPassword}
                 onChange={(e) => setDemoPassword(e.target.value)}
                 placeholder="Enter demo password..."
-                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full rounded-2xl border border-slate-400 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
 
               <button
                 onClick={() => {
                   if (!demoPassword.trim()) return;
-                  localStorage.setItem("DEMO_PASSWORD", demoPassword);
                   setIsUnlocked(true);
                 }}
                 className="rounded-2xl bg-slate-900 text-white px-5 py-3 text-sm font-medium hover:bg-slate-800 transition"
@@ -234,13 +236,19 @@ export default function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onEnterPress}
-              placeholder="Type your question here..."
-              className="w-full resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 placeholder:text-slate-300"
+              placeholder={
+                isUnlocked
+                  ? "Type your question here..."
+                  : "Enter password first to unlock..."
+              }
+              disabled={!isUnlocked}
+              className="w-full resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 placeholder:text-slate-300 disabled:opacity-60"
               rows={1}
             />
             <button
               onClick={sendMessage}
-              className="rounded-2xl bg-slate-900 text-white px-5 py-3 text-sm font-medium hover:bg-slate-800 transition"
+              disabled={!isUnlocked}
+              className="rounded-2xl bg-slate-900 text-white px-5 py-3 text-sm font-medium hover:bg-slate-800 transition disabled:opacity-60"
             >
               Send
             </button>
